@@ -1,4 +1,4 @@
-﻿package com.preet.airesumeanalyzer.controller;
+package com.preet.airesumeanalyzer.controller;
 
 import com.preet.airesumeanalyzer.domain.dto.ResumeAnalysisResponse;
 import com.preet.airesumeanalyzer.domain.dto.ResumeScoreResponse;
@@ -48,3 +48,4 @@ public class ResumeController {
         return ResponseEntity.noContent().build();
     }
 }
+

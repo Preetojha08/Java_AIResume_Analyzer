@@ -1,4 +1,4 @@
-﻿package com.preet.airesumeanalyzer.service;
+package com.preet.airesumeanalyzer.service;
 
 import com.preet.airesumeanalyzer.domain.dto.ResumeAnalysisResponse;
 import com.preet.airesumeanalyzer.domain.dto.ResumeAnalysisResult;
@@ -111,3 +111,4 @@ public class ResumeService {
                 .orElseThrow(() -> new ResourceNotFoundException("Resume not found for id " + resumeId));
     }
 }
+

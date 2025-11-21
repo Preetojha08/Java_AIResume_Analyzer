@@ -1,4 +1,4 @@
-﻿package com.preet.airesumeanalyzer.service;
+package com.preet.airesumeanalyzer.service;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,3 +36,4 @@ public class TikaTextExtractionService implements TextExtractionService {
         return text;
     }
 }
+

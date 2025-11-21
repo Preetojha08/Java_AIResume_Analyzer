@@ -1,4 +1,4 @@
-﻿package com.preet.airesumeanalyzer.config;
+package com.preet.airesumeanalyzer.config;
 
 import com.preet.airesumeanalyzer.security.ApiKeyFilter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -17,3 +17,4 @@ public class SecurityConfig {
         return registrationBean;
     }
 }
+

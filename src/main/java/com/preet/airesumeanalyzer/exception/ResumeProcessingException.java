@@ -1,4 +1,4 @@
-﻿package com.preet.airesumeanalyzer.exception;
+package com.preet.airesumeanalyzer.exception;
 
 public class ResumeProcessingException extends RuntimeException {
     public ResumeProcessingException(String message) {
@@ -9,3 +9,4 @@ public class ResumeProcessingException extends RuntimeException {
         super(message, cause);
     }
 }
+

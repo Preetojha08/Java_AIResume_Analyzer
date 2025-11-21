@@ -1,4 +1,4 @@
-﻿package com.preet.airesumeanalyzer.exception;
+package com.preet.airesumeanalyzer.exception;
 
 import java.time.Instant;
 import java.util.Map;
@@ -44,3 +44,4 @@ public class GlobalExceptionHandler {
         );
     }
 }
+

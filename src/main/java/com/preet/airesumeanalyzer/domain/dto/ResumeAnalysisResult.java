@@ -1,4 +1,4 @@
-﻿package com.preet.airesumeanalyzer.domain.dto;
+package com.preet.airesumeanalyzer.domain.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
@@ -30,3 +30,4 @@ public class ResumeAnalysisResult {
     @JsonProperty("summary")
     private String summary;
 }
+

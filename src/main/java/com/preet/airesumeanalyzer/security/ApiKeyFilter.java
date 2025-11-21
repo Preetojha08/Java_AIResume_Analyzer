@@ -1,4 +1,4 @@
-﻿package com.preet.airesumeanalyzer.security;
+package com.preet.airesumeanalyzer.security;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -31,3 +31,4 @@ public class ApiKeyFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 }
+

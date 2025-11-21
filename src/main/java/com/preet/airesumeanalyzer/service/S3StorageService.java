@@ -1,4 +1,4 @@
-﻿package com.preet.airesumeanalyzer.service;
+package com.preet.airesumeanalyzer.service;
 
 import com.preet.airesumeanalyzer.config.AwsProperties;
 import java.io.InputStream;
@@ -45,3 +45,4 @@ public class S3StorageService implements StorageService {
         log.info("Deleted resume from S3 bucket={}, key={}", bucket, key);
     }
 }
+

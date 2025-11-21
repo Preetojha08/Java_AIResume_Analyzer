@@ -1,4 +1,4 @@
-﻿package com.preet.airesumeanalyzer.config;
+package com.preet.airesumeanalyzer.config;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -25,3 +25,4 @@ public class AwsClientsConfig {
                 .build();
     }
 }
+

@@ -1,4 +1,4 @@
-﻿package com.preet.airesumeanalyzer.service;
+package com.preet.airesumeanalyzer.service;
 
 import java.io.InputStream;
 
@@ -7,3 +7,4 @@ public interface StorageService {
 
     void delete(String key);
 }
+

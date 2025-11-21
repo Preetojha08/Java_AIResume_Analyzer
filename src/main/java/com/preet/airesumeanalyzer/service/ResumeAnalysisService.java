@@ -1,4 +1,4 @@
-﻿package com.preet.airesumeanalyzer.service;
+package com.preet.airesumeanalyzer.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -96,3 +96,4 @@ public class ResumeAnalysisService {
         }
     }
 }
+

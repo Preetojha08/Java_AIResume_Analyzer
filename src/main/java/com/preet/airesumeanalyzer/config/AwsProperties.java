@@ -1,4 +1,4 @@
-﻿package com.preet.airesumeanalyzer.config;
+package com.preet.airesumeanalyzer.config;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -25,3 +25,4 @@ public class AwsProperties {
         private String modelId;
     }
 }
+

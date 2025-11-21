@@ -1,4 +1,4 @@
-﻿package com.preet.airesumeanalyzer.service;
+package com.preet.airesumeanalyzer.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -93,3 +93,4 @@ Return ONLY valid JSON with keys: atsScore, skillsTechnical, skillsSoft, strengt
         }
     }
 }
+

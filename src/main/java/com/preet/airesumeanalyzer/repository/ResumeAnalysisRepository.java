@@ -1,4 +1,4 @@
-﻿package com.preet.airesumeanalyzer.repository;
+package com.preet.airesumeanalyzer.repository;
 
 import com.preet.airesumeanalyzer.domain.entity.ResumeAnalysis;
 import java.util.Optional;
@@ -10,3 +10,4 @@ public interface ResumeAnalysisRepository extends JpaRepository<ResumeAnalysis, 
 
     void deleteByResumeId(UUID resumeId);
 }
+

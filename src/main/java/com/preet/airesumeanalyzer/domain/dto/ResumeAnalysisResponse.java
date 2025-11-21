@@ -1,4 +1,4 @@
-﻿package com.preet.airesumeanalyzer.domain.dto;
+package com.preet.airesumeanalyzer.domain.dto;
 
 import java.time.Instant;
 import java.util.List;
@@ -23,3 +23,4 @@ public class ResumeAnalysisResponse {
     Instant uploadedAt;
     Instant createdAt;
 }
+

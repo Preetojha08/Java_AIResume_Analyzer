@@ -1,4 +1,4 @@
-﻿package com.preet.airesumeanalyzer.domain.dto;
+package com.preet.airesumeanalyzer.domain.dto;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -14,3 +14,4 @@ public class ResumeUploadResponse {
     String message;
     Instant uploadedAt;
 }
+
