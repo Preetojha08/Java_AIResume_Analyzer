@@ -33,17 +33,17 @@ public class ResumeController {
     }
 
     @GetMapping("/{resumeId}/analysis")
-    public ResponseEntity<ResumeAnalysisResponse> getAnalysis(@PathVariable UUID resumeId) {
+    public ResponseEntity<ResumeAnalysisResponse> getAnalysis(@PathVariable("resumeId") UUID resumeId) {
         return ResponseEntity.ok(resumeService.getAnalysis(resumeId));
     }
 
     @GetMapping("/{resumeId}/score")
-    public ResponseEntity<ResumeScoreResponse> getScore(@PathVariable UUID resumeId) {
+    public ResponseEntity<ResumeScoreResponse> getScore(@PathVariable("resumeId") UUID resumeId) {
         return ResponseEntity.ok(resumeService.getScore(resumeId));
     }
 
     @DeleteMapping("/{resumeId}")
-    public ResponseEntity<Void> deleteResume(@PathVariable UUID resumeId) {
+    public ResponseEntity<Void> deleteResume(@PathVariable("resumeId") UUID resumeId) {
         resumeService.deleteResume(resumeId);
         return ResponseEntity.noContent().build();
     }

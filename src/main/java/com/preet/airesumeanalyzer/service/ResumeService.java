@@ -28,7 +28,6 @@ public class ResumeService {
     private final ResumeRepository resumeRepository;
     private final StorageService storageService;
     private final TextExtractionService textExtractionService;
-    private final BedrockService bedrockService;
     private final ResumeAnalysisService resumeAnalysisService;
 
     public ResumeUploadResponse uploadAndAnalyze(MultipartFile file) {
@@ -36,10 +35,10 @@ public class ResumeService {
         byte[] bytes = toBytes(file);
 
         Resume resume = saveResumeMetadata(file, bytes.length);
-        storageService.upload(resume.getS3Key(), new ByteArrayInputStream(bytes), bytes.length, file.getContentType());
+        storageService.upload(resume.getStorageKey(), new ByteArrayInputStream(bytes), bytes.length, file.getContentType());
 
         String resumeText = textExtractionService.extractText(new ByteArrayInputStream(bytes));
-        ResumeAnalysisResult analysisResult = bedrockService.analyzeResumeText(resumeText);
+        ResumeAnalysisResult analysisResult = resumeAnalysisService.analyzeResumeText(resumeText);
         ResumeAnalysis analysis = resumeAnalysisService.saveAnalysis(resume, analysisResult);
 
         return ResumeUploadResponse.builder()
@@ -65,7 +64,7 @@ public class ResumeService {
 
     public void deleteResume(UUID resumeId) {
         Resume resume = getResumeOrThrow(resumeId);
-        storageService.delete(resume.getS3Key());
+        storageService.delete(resume.getStorageKey());
         resumeAnalysisService.deleteByResumeId(resumeId);
         resumeRepository.delete(resume);
         log.info("Deleted resume {} and associated analysis", resumeId);
@@ -73,7 +72,7 @@ public class ResumeService {
 
     private Resume saveResumeMetadata(MultipartFile file, long size) {
         Resume resume = Resume.builder()
-                .s3Key(buildS3Key(file.getOriginalFilename()))
+                .storageKey(buildStorageKey(file.getOriginalFilename()))
                 .originalFileName(file.getOriginalFilename())
                 .contentType(file.getContentType())
                 .uploadedAt(Instant.now())
@@ -81,7 +80,7 @@ public class ResumeService {
         return resumeRepository.save(resume);
     }
 
-    private String buildS3Key(String originalFileName) {
+    private String buildStorageKey(String originalFileName) {
         String suffix = ".pdf";
         if (originalFileName != null && originalFileName.contains(".")) {
             suffix = originalFileName.substring(originalFileName.lastIndexOf('.'));

@@ -3,26 +3,71 @@ package com.preet.airesumeanalyzer.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.preet.airesumeanalyzer.domain.dto.ResumeAnalysisResult;
 import com.preet.airesumeanalyzer.domain.dto.ResumeAnalysisResponse;
 import com.preet.airesumeanalyzer.domain.dto.ResumeScoreResponse;
 import com.preet.airesumeanalyzer.domain.entity.Resume;
 import com.preet.airesumeanalyzer.domain.entity.ResumeAnalysis;
 import com.preet.airesumeanalyzer.exception.ResourceNotFoundException;
+import com.preet.airesumeanalyzer.exception.ResumeProcessingException;
 import com.preet.airesumeanalyzer.repository.ResumeAnalysisRepository;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientResponseException;
 
 @Service
 @RequiredArgsConstructor
 public class ResumeAnalysisService {
 
+    private static final Logger log = LoggerFactory.getLogger(ResumeAnalysisService.class);
+    @Value("${gemini.api-key:}")
+    private String geminiApiKey;
+
+    @Value("${gemini.model:gemini-2.5-pro}")
+    private String geminiModel;
+
     private final ResumeAnalysisRepository resumeAnalysisRepository;
     private final ObjectMapper objectMapper;
+    private final RestClient restClient = RestClient.builder()
+            .baseUrl("https://generativelanguage.googleapis.com/v1")
+            .build();
+
+    public ResumeAnalysisResult analyzeResumeText(String resumeText) {
+        if (geminiApiKey == null || geminiApiKey.isBlank()) {
+            throw new ResumeProcessingException("Gemini API key not configured");
+        }
+        try {
+            String response = restClient.post()
+                    .uri("/models/" + geminiModel + ":generateContent?key={key}", geminiApiKey)
+                    .body(buildRequestPayload(resumeText))
+                    .retrieve()
+                    .body(String.class);
+
+            String content = normalizeJson(extractText(response));
+            if (content == null || content.isBlank()) {
+                throw new ResumeProcessingException("Gemini returned empty response");
+            }
+            return objectMapper.readValue(content, ResumeAnalysisResult.class);
+        } catch (ResumeProcessingException e) {
+            throw e;
+        } catch (RestClientResponseException e) {
+            log.error("Gemini HTTP error status={}, body={}", e.getRawStatusCode(), e.getResponseBodyAsString());
+            throw new ResumeProcessingException("Gemini HTTP error: " + e.getStatusText(), e);
+        } catch (Exception e) {
+            log.error("Gemini analysis failed", e);
+            throw new ResumeProcessingException("Gemini analysis failed: " + e.getMessage(), e);
+        }
+    }
 
     public ResumeAnalysis saveAnalysis(Resume resume, ResumeAnalysisResult result) {
         ResumeAnalysis analysis = ResumeAnalysis.builder()
@@ -94,6 +139,69 @@ public class ResumeAnalysisService {
         } catch (JsonProcessingException e) {
             throw new IllegalStateException("Unable to deserialize list", e);
         }
+    }
+
+    private String buildPrompt(String resumeText) {
+        return """
+Analyze this resume text and return JSON with the following fields:
+- atsScore (integer 0-100)
+- skillsTechnical (array of strings)
+- skillsSoft (array of strings)
+- strengths (array of strings)
+- weaknesses (array of strings)
+- suggestedRoles (array of strings)
+- missingKeywords (array of strings)
+- summary (string, 3-4 sentences)
+
+Resume:
+%s
+Output only JSON, no prose or Markdown fences.
+""".formatted(resumeText);
+    }
+
+    private Object buildRequestPayload(String resumeText) {
+        return Map.of(
+                "contents", List.of(
+                        Map.of("parts", List.of(
+                                Map.of("text", buildPrompt(resumeText))
+                        ))
+                )
+        );
+    }
+
+    private String extractText(String responseBody) throws JsonProcessingException {
+        JsonNode root = objectMapper.readTree(responseBody);
+        JsonNode candidates = root.path("candidates");
+        if (candidates.isArray() && candidates.size() > 0) {
+            JsonNode parts = candidates.get(0).path("content").path("parts");
+            if (parts.isArray() && parts.size() > 0) {
+                return parts.get(0).path("text").asText();
+            }
+        }
+        return null;
+    }
+
+    private String normalizeJson(String raw) {
+        if (raw == null) {
+            return null;
+        }
+        String trimmed = raw.trim();
+        // Strip Markdown fences if present
+        if (trimmed.startsWith("```")) {
+            trimmed = trimmed.replaceFirst("```json\\s*", "")
+                    .replaceFirst("^```\\s*", "")
+                    .replaceAll("```\\s*$", "")
+                    .trim();
+        }
+        // If JSON is embedded in text, extract first/last brace
+        if (!trimmed.startsWith("{")) {
+            int start = trimmed.indexOf('{');
+            int end = trimmed.lastIndexOf('}');
+            if (start >= 0 && end > start) {
+                trimmed = trimmed.substring(start, end + 1);
+            }
+        }
+        return trimmed.trim();
     }
 }
 

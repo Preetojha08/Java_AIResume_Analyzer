@@ -1,10 +1,10 @@
-﻿spring:
+spring:
   application:
     name: ai-resume-analyzer
   datasource:
     url: jdbc:postgresql://localhost:5432/resume_analyzer
     username: postgres
-    password: change-me
+    password: postgres
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -13,14 +13,18 @@
     properties:
       hibernate:
         format_sql: true
-aws:
-  region: ca-central-1 # TODO: replace with target AWS region
-  s3:
-    bucket-name: preet-resume-analyzer-resumes # TODO: change to actual bucket
-  bedrock:
-    model-id: anthropic.claude-3-sonnet-20240229-v1:0 # TODO: set to preferred model id
+
+gemini:
+  api-key: 
+  model: gemini-2.0-flash-lite
+
+storage:
+  local:
+    base-path: ./uploads/resumes
+
 security:
-  api-key: change-me-api-key
+  api-key: local-dev-key
+
 logging:
   level:
     root: INFO

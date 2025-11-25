@@ -27,8 +27,8 @@ public class Resume {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @Column(name = "s3_key", nullable = false, unique = true, length = 512)
-    private String s3Key;
+    @Column(name = "storage_key", nullable = false, unique = true, length = 512)
+    private String storageKey;
 
     @Column(name = "original_file_name", nullable = false)
     private String originalFileName;

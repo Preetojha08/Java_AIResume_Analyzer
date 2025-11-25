@@ -1,7 +1,6 @@
 C:\Users\devel\OneDrive\Desktop\Projects AI\JavaAIResume\src\main\java\com\preet\airesumeanalyzer\AiResumeAnalyzerApplication.java
-C:\Users\devel\OneDrive\Desktop\Projects AI\JavaAIResume\src\main\java\com\preet\airesumeanalyzer\config\AwsClientsConfig.java
-C:\Users\devel\OneDrive\Desktop\Projects AI\JavaAIResume\src\main\java\com\preet\airesumeanalyzer\config\AwsProperties.java
 C:\Users\devel\OneDrive\Desktop\Projects AI\JavaAIResume\src\main\java\com\preet\airesumeanalyzer\config\SecurityConfig.java
+C:\Users\devel\OneDrive\Desktop\Projects AI\JavaAIResume\src\main\java\com\preet\airesumeanalyzer\config\StorageProperties.java
 C:\Users\devel\OneDrive\Desktop\Projects AI\JavaAIResume\src\main\java\com\preet\airesumeanalyzer\controller\ResumeController.java
 C:\Users\devel\OneDrive\Desktop\Projects AI\JavaAIResume\src\main\java\com\preet\airesumeanalyzer\domain\dto\ResumeAnalysisResponse.java
 C:\Users\devel\OneDrive\Desktop\Projects AI\JavaAIResume\src\main\java\com\preet\airesumeanalyzer\domain\dto\ResumeAnalysisResult.java
@@ -15,11 +14,9 @@ C:\Users\devel\OneDrive\Desktop\Projects AI\JavaAIResume\src\main\java\com\preet
 C:\Users\devel\OneDrive\Desktop\Projects AI\JavaAIResume\src\main\java\com\preet\airesumeanalyzer\repository\ResumeAnalysisRepository.java
 C:\Users\devel\OneDrive\Desktop\Projects AI\JavaAIResume\src\main\java\com\preet\airesumeanalyzer\repository\ResumeRepository.java
 C:\Users\devel\OneDrive\Desktop\Projects AI\JavaAIResume\src\main\java\com\preet\airesumeanalyzer\security\ApiKeyFilter.java
-C:\Users\devel\OneDrive\Desktop\Projects AI\JavaAIResume\src\main\java\com\preet\airesumeanalyzer\service\BedrockRuntimeService.java
-C:\Users\devel\OneDrive\Desktop\Projects AI\JavaAIResume\src\main\java\com\preet\airesumeanalyzer\service\BedrockService.java
+C:\Users\devel\OneDrive\Desktop\Projects AI\JavaAIResume\src\main\java\com\preet\airesumeanalyzer\service\LocalStorageService.java
 C:\Users\devel\OneDrive\Desktop\Projects AI\JavaAIResume\src\main\java\com\preet\airesumeanalyzer\service\ResumeAnalysisService.java
 C:\Users\devel\OneDrive\Desktop\Projects AI\JavaAIResume\src\main\java\com\preet\airesumeanalyzer\service\ResumeService.java
-C:\Users\devel\OneDrive\Desktop\Projects AI\JavaAIResume\src\main\java\com\preet\airesumeanalyzer\service\S3StorageService.java
 C:\Users\devel\OneDrive\Desktop\Projects AI\JavaAIResume\src\main\java\com\preet\airesumeanalyzer\service\StorageService.java
 C:\Users\devel\OneDrive\Desktop\Projects AI\JavaAIResume\src\main\java\com\preet\airesumeanalyzer\service\TextExtractionService.java
 C:\Users\devel\OneDrive\Desktop\Projects AI\JavaAIResume\src\main\java\com\preet\airesumeanalyzer\service\TikaTextExtractionService.java

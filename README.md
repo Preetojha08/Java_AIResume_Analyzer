@@ -1,13 +1,13 @@
-﻿# AI Resume Analyzer
+# AI Resume Analyzer
 
-AI-powered backend that ingests PDF resumes, stores them on Amazon S3, extracts the text with Apache Tika, and leverages AWS Bedrock to deliver ATS-style insights that persist inside PostgreSQL.
+Backend reference implementation that ingests PDF resumes, stores them on the local filesystem, extracts the text with Apache Tika, and asks OpenAI to generate ATS-style insights that are persisted to PostgreSQL.
 
 ## Tech Stack
-- Java 17, Spring Boot 3
-- Spring Web/Data JPA/Validation/Actuator
-- PostgreSQL (local + AWS RDS ready)
+- Java 17, Spring Boot 3.3
+- Spring MVC, Spring Data JPA, Validation, Actuator
+- PostgreSQL (local Docker or managed service)
 - Apache Tika for document parsing
-- AWS SDK v2 (S3 + Bedrock Runtime)
+- OpenAI Chat Completions API for analysis
 - Maven build
 
 ## Architecture Overview
@@ -16,21 +16,20 @@ Client
   |
 ResumeController (REST)
   |
-ResumeService -----------------------------------------------+
-  |            |             |                |               |
-StorageService | TextExtractionService BedrockService ResumeAnalysisService
-    |                   |              |                 |
- AWS S3           Apache Tika     AWS Bedrock       PostgreSQL (JPA Repos)
+ResumeService ---------------------------------------------------------+
+  |            |                     |                  |              |
+StorageService | TextExtractionService AiAnalysisService ResumeAnalysisService
+    |                   |                     |                  |
+ Local disk        Apache Tika          OpenAI Chat API     PostgreSQL (JPA)
 ```
 
 ## Domain Model
-- `Resume` – UUID primary key, S3 key, original filename, content type, uploaded timestamp.
-- `ResumeAnalysis` – UUID primary key, FK to `Resume`, ATS score,技能 arrays (stored as JSON strings), strengths/weaknesses/suggestions, summary, created timestamp.
+- `Resume` – UUID id, storage key (relative file path), original filename, MIME type, uploaded timestamp.
+- `ResumeAnalysis` – UUID id, FK to `Resume`, ATS score, skill arrays (stored as JSON), strengths/weaknesses, suggested roles, missing keywords, summary, creation timestamp.
 
 ## REST API
-### 1. `POST /api/resumes/upload`
-Multipart field `file` (PDF only).
-Response
+### `POST /api/resumes/upload`
+Multipart field `file` (PDF). Returns:
 ```json
 {
   "resumeId": "e4a96e55-9c0c-4f8c-b77a-2c42f0e70b3f",
@@ -41,42 +40,16 @@ Response
 }
 ```
 
-### 2. `GET /api/resumes/{id}/analysis`
-Response
-```json
-{
-  "resumeId": "...",
-  "analysisId": "...",
-  "originalFileName": "preet_resume.pdf",
-  "atsScore": 82,
-  "skillsTechnical": ["Java", "Spring Boot", "PostgreSQL"],
-  "skillsSoft": ["Leadership", "Communication"],
-  "strengths": ["Strong API design"],
-  "weaknesses": ["Limited AWS experience"],
-  "suggestedRoles": ["Backend Developer", "Cloud Engineer"],
-  "missingKeywords": ["Kubernetes", "CI/CD"],
-  "summary": "(3-4 sentence summary)",
-  "uploadedAt": "2025-11-18T20:15:13.012Z",
-  "createdAt": "2025-11-18T20:15:18.350Z"
-}
-```
+### `GET /api/resumes/{id}/analysis`
+Returns skills, strengths/weaknesses, suggested roles, missing keywords, summary, ATS score, timestamps.
 
-### 3. `GET /api/resumes/{id}/score`
-```json
-{
-  "resumeId": "...",
-  "analysisId": "...",
-  "atsScore": 82,
-  "shortSummary": "Concise summary text",
-  "createdAt": "2025-11-18T20:15:18.350Z"
-}
-```
+### `GET /api/resumes/{id}/score`
+Lightweight payload with `atsScore`, `shortSummary`, and timestamps.
 
-### 4. `DELETE /api/resumes/{id}`
-Deletes S3 object and DB rows, responds with `204 No Content`.
+### `DELETE /api/resumes/{id}`
+Deletes the stored PDF and DB rows. Response: `204 No Content`.
 
-### Security
-All `/api/**` endpoints require header `X-API-KEY`. Configure the value via `security.api-key` property or env var.
+> **Security** – All `/api/**` endpoints expect header `X-API-KEY`. Configure the value via `security.api-key` or `API_KEY_HEADER` env var.
 
 ## Configuration (`src/main/resources/application.yml`)
 ```yaml
@@ -84,73 +57,65 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/resume_analyzer
     username: postgres
-    password: change-me # TODO: move to env var
+    password: postgres
   jpa:
     hibernate:
       ddl-auto: update
 
-aws:
-  region: ca-central-1 # TODO: set preferred region
-  s3:
-    bucket-name: preet-resume-analyzer-resumes # TODO: actual bucket
-  bedrock:
-    model-id: anthropic.claude-3-sonnet-20240229-v1:0 # TODO: choose model
+openai:
+  api-key: ${OPENAI_API_KEY:change-me}
+  model: gpt-4.1-mini
+
+storage:
+  local:
+    base-path: ./uploads/resumes
 
 security:
-  api-key: change-me-api-key # TODO: set secret via env var
+  api-key: ${API_KEY_HEADER:change-me-api-key}
 ```
-Use environment variables or `application-*.yml` overrides for production. AWS credentials should be provided via standard SDK providers (env vars, AWS profile, or IAM role).
+Override anything using environment variables or profile-specific YAML files.
 
-## Running Locally
-1. Install Java 17 and Maven 3.9+.
-2. Start PostgreSQL locally (Docker example):
+## Local Setup
+1. **PostgreSQL** (Docker example):
    ```bash
-   docker run --name resume-db -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=resume_analyzer -p 5432:5432 -d postgres:15
+   docker run --name resume-db -e POSTGRES_PASSWORD=postgres \
+     -e POSTGRES_DB=resume_analyzer -p 5432:5432 -d postgres:15
    ```
-3. Set env vars (powershell example):
+2. **Environment variables** (PowerShell example):
    ```powershell
-   $env:AWS_ACCESS_KEY_ID="..."
-   $env:AWS_SECRET_ACCESS_KEY="..."
-   $env:AWS_REGION="ca-central-1"
-   $env:SECURITY_API_KEY="local-dev-key"
+   $env:OPENAI_API_KEY="sk-your-key"
+   $env:API_KEY_HEADER="local-dev-key"
    ```
-4. Run the service:
+3. **Build & run**:
    ```bash
+   mvn clean verify
    mvn spring-boot:run
    ```
-
-## AWS Resources Needed
-- **S3 bucket** for resume PDFs (e.g., `preet-resume-analyzer-resumes`). Configure bucket + IAM policy for Put/Delete.
-- **RDS PostgreSQL**: create DB instance, update JDBC URL in config, ensure security group allows traffic from app host/EB environment.
-- **AWS Bedrock access**: enable Bedrock in selected region and ensure IAM role/user has `bedrock:InvokeModel` permission on the chosen model.
-
-## Deployment Guide
-### EC2 / Elastic Beanstalk (single Jar)
-1. Build artifact: `mvn clean package -DskipTests` (produces `target/ai-resume-analyzer-0.0.1-SNAPSHOT.jar`).
-2. Provision EC2 or Elastic Beanstalk environment (Java 17 platform) in desired region.
-3. Configure environment variables: JDBC URL/credentials, `AWS_REGION`, `SECURITY_API_KEY`, `AWS_ACCESS_KEY_ID/SECRET` (or assign IAM role with Bedrock, S3, RDS access).
-4. Ensure the EC2/EB security group can reach RDS and S3 endpoints.
-5. Upload jar and run:
+4. **Smoke test**:
    ```bash
-   java -jar ai-resume-analyzer-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod
+   curl -X POST http://localhost:8080/api/resumes/upload `
+        -H "X-API-KEY: local-dev-key" `
+        -F "file=@/path/to/resume.pdf"
    ```
-6. (Optional) place jar + startup command in systemd unit for auto restart.
 
-### Elastic Beanstalk specifics
-1. Create new EB app (Java 17 platform).
-2. Zip the jar as `application.jar` or provide Dockerrun if using containers.
-3. Set environment variables under Configuration → Software.
-4. Attach IAM instance profile granting S3 (put/delete), RDS (via VPC SG), and Bedrock (InvokeModel) permissions.
-5. Deploy version; EB handles load balancing/auto-scaling.
+## Deployment Notes
+- Package with `mvn clean package` and run `java -jar target/ai-resume-analyzer-0.0.1-SNAPSHOT.jar`.
+- Ensure the runtime host has:
+  1. Java 17,
+  2. Access to PostgreSQL,
+  3. Writable directory for `storage.local.base-path`,
+  4. `OPENAI_API_KEY` + `API_KEY_HEADER` environment variables.
+- For containerization, mount a volume to `/app/uploads/resumes` (or whichever base path you set) so files persist.
 
-## How To Explain In An Interview
-- Highlight clean layering (controllers → services → repositories) and AWS integrations (S3, Bedrock, RDS) with Apache Tika for deterministic parsing.
-- Emphasize defense-in-depth: validation, API key filter, centralized error handling.
-- Talk through the resume flow (upload→S3→Tika→Bedrock→Postgres) and how it mirrors production best practices (config-driven, DTOs, logging).
-- Mention extensibility ideas: add queued processing, caching, or UI later.
+## Interview Talking Points
+- Clean layering: controllers → services → repositories with DTO boundaries.
+- Text extraction is deterministic (Apache Tika) before LLM processing, enabling auditing and caching later.
+- OpenAI integration encapsulated in `AiAnalysisService`, making it easy to swap providers (Anthropic, Bedrock) without touching controllers.
+- Security: API key filter, validation, and centralized exception handling mimic production hardening.
 
-## Next Steps / Enhancements
-1. Add async processing (SQS/Lambda) for heavy resumes.
-2. Implement audit logging and structured metrics.
-3. Build a front-end or CLI for demonstration.
-4. Automate infrastructure with Terraform or CDK.
+## Future Enhancements
+1. Add async processing (queue up uploads, respond fast).
+2. Implement resumable uploads & virus scanning.
+3. Cache analysis results per resume checksum.
+4. Add observability (structured logs, metrics, tracing).
+5. Optional AWS profile that re-enables S3/Bedrock using the same service interfaces.
