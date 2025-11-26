@@ -15,7 +15,7 @@ spring:
         format_sql: true
 
 gemini:
-  api-key: 
+  api-key: AIzaSyCFmY2OqWe1p3eQAcr8a8-NokcIARNsrGg 
   model: gemini-2.0-flash-lite
 
 storage:

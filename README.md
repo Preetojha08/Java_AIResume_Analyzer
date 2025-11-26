@@ -119,3 +119,105 @@ Override anything using environment variables or profile-specific YAML files.
 3. Cache analysis results per resume checksum.
 4. Add observability (structured logs, metrics, tracing).
 5. Optional AWS profile that re-enables S3/Bedrock using the same service interfaces.
+
+## Frontend (React + Vite)
+- Location: `frontend/` (React + TypeScript + Vite + Tailwind).
+- Routes: `/` upload view, `/analysis/:resumeId` analysis view.
+- API client automatically sends `X-API-KEY` from env vars to the Spring Boot backend.
+
+### Setup
+1. `cd frontend`
+2. Copy env template: `cp .env.example .env.local`
+3. Set values:
+   - `VITE_API_BASE_URL=http://localhost:8080`
+   - `VITE_API_KEY=local-dev-key` (or your configured key)
+4. Install deps: `npm install`
+5. Run dev server: `npm run dev` then open the shown URL (default `http://localhost:5173`)
+
+### What the UI does
+- Upload PDF resumes (drag-and-drop) with animated CTA, shows upload status and links to the analysis view.
+- Analysis page: hero ATS score ring, summary, skills, strengths/weaknesses, suggested roles, missing keywords, timestamps, and delete flow with confirmation + toasts.
+
+---
+
+# Full Project README
+
+## Overview
+AI Resume Analyzer with Spring Boot backend and React/Vite frontend. Upload a PDF, get an ATS-style analysis powered by Gemini, and view/delete results.
+
+## Tech Stack
+- Backend: Java 17, Spring Boot 3.3, Spring MVC, JPA, PostgreSQL, Apache Tika, Google Gemini
+- Frontend: React 18, TypeScript, Vite, TailwindCSS, Framer Motion, React Router
+- Auth: API key header `X-API-KEY` (default `local-dev-key`)
+
+## Backend
+### Prereqs
+- Java 17, Maven
+- PostgreSQL running with DB `resume_analyzer`, user `postgres`, password `postgres` (matching `src/main/resources/application.yml`)
+- Gemini API key set via env (`GEMINI_API_KEY`) if you want real analysis
+
+### Run
+```bash
+mvn spring-boot:run
+# server on http://localhost:8080
+```
+
+### Env/config notes
+- `security.api-key` in `application.yml` controls the required `X-API-KEY` (default `local-dev-key`).
+- Files stored under `./uploads/resumes`.
+- CORS is enabled for `http://localhost:5173` and preflights skip API key checks.
+
+### Smoke test
+```bash
+curl -i http://localhost:8080/actuator/health
+curl -i -X POST http://localhost:8080/api/resumes/upload \
+  -H "X-API-KEY: local-dev-key" \
+  -F "file=@/path/to/resume.pdf"
+```
+
+## Frontend
+### Prereqs
+- Node 18+, npm
+
+### Setup
+```bash
+cd frontend
+cp .env.example .env.local
+# edit .env.local if needed
+# VITE_API_BASE_URL=http://localhost:8080
+# VITE_API_KEY=local-dev-key
+npm install
+npm run dev
+# open http://localhost:5173
+```
+
+### Build
+```bash
+npm run build
+# output in frontend/dist
+```
+
+### Features
+- Upload PDF (drag/drop or browse) with validation, loading, toasts
+- Analysis view:
+  - Hero ATS score ring (animated)
+  - Technical/soft skills, strengths, weaknesses
+  - Suggested roles, missing keywords with warning chips
+  - Executive and full summaries, timestamps
+  - Delete resume with confirmation modal + success toast
+- Responsive 12-col layout, glass/gradient styling, animated cards/chips
+- Footer on all pages:
+  - © 2025 Creatures Inc. | Crafted by Preet Ojha
+  - Languages & Frameworks: React, TypeScript | Styling: TailwindCSS
+  - AI Model: Google Gemini 2.5 Pro
+
+## Running everything locally
+1. Start PostgreSQL and ensure creds match `application.yml`.
+2. Backend: `mvn spring-boot:run` (port 8080).
+3. Frontend: `cd frontend && npm install && npm run dev` (port 5173).
+4. Open `http://localhost:5173`, upload a PDF, click “View Full Analysis”. Delete via the floating button on the analysis page.
+
+## Common issues
+- CORS / preflight: Already enabled for `http://localhost:5173`; ensure you restarted backend after changes.
+- 401/403: Check `VITE_API_KEY` matches `security.api-key` and backend is running.
+- DB errors: Confirm Postgres is up and `resume_analyzer` DB exists with matching user/pass.

@@ -22,6 +22,11 @@ public class ApiKeyFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            // Allow preflight requests to pass for CORS negotiation
+            filterChain.doFilter(request, response);
+            return;
+        }
         String headerKey = request.getHeader("X-API-KEY");
         if (apiKey != null && !apiKey.isBlank() && !apiKey.equals(headerKey)) {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());

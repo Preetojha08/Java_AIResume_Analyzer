@@ -15,6 +15,7 @@ com\preet\airesumeanalyzer\domain\entity\ResumeAnalysis$ResumeAnalysisBuilder.cl
 com\preet\airesumeanalyzer\exception\GlobalExceptionHandler.class
 com\preet\airesumeanalyzer\repository\ResumeAnalysisRepository.class
 com\preet\airesumeanalyzer\config\SecurityConfig.class
+com\preet\airesumeanalyzer\config\CorsConfig.class
 com\preet\airesumeanalyzer\service\ResumeAnalysisService.class
 com\preet\airesumeanalyzer\domain\dto\ResumeScoreResponse.class
 com\preet\airesumeanalyzer\repository\ResumeRepository.class
