@@ -175,6 +175,29 @@ curl -i -X POST http://localhost:8080/api/resumes/upload \
   -F "file=@/path/to/resume.pdf"
 ```
 
+### Job fit endpoints
+- `POST /api/resumes/{resumeId}/job-fit` — body `{ jobTitle?: string, jobDescription: string }`, returns job-specific match with skills/keywords/suggestions.
+- `GET /api/resumes/{resumeId}/job-fit` — list all job-fit runs for a resume (newest first).
+- `GET /api/resumes/{resumeId}/job-fit/{jobFitId}` — fetch a specific job-fit run.
+
+Example response fields:
+```json
+{
+  "jobFitId": "uuid",
+  "resumeId": "uuid",
+  "jobTitle": "Frontend Engineer",
+  "matchScore": 82,
+  "requiredTechnicalSkills": ["React", "TypeScript"],
+  "requiredSoftSkills": ["Collaboration", "Communication"],
+  "niceToHaveSkills": ["GraphQL"],
+  "matchedKeywords": ["React", "TypeScript"],
+  "missingRequiredKeywords": ["GraphQL"],
+  "missingNiceToHaveKeywords": ["Next.js"],
+  "tailoredSuggestions": ["Add a bullet about GraphQL API experience"],
+  "createdAt": "2025-11-26T06:00:00Z"
+}
+```
+
 ## Frontend
 ### Prereqs
 - Node 18+, npm
@@ -205,6 +228,11 @@ npm run build
   - Suggested roles, missing keywords with warning chips
   - Executive and full summaries, timestamps
   - Delete resume with confirmation modal + success toast
+- Job Fit view (on analysis page):
+  - Paste a job description + optional job title to get a job-specific match score
+  - JD-extracted skills (required tech/soft, nice-to-have)
+  - Matched vs missing keywords, tailored suggestions for this job
+  - Multiple job-fit runs per resume, selectable via dropdown
 - Responsive 12-col layout, glass/gradient styling, animated cards/chips
 - Footer on all pages:
   - © 2025 Creatures Inc. | Crafted by Preet Ojha

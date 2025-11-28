@@ -5,6 +5,8 @@ import java.io.InputStream;
 public interface StorageService {
     String upload(String key, InputStream inputStream, long contentLength, String contentType);
 
+    InputStream load(String key);
+
     void delete(String key);
 }
 

@@ -17,7 +17,7 @@ export const SkillTags = ({ title, items = [], tone = 'primary', tooltip }: Skil
         : 'bg-white text-slate-800 border border-slate-100';
 
   return (
-    <div className="glass-card rounded-2xl p-5 shadow-subtle">
+    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
       <div className="flex items-center justify-between gap-2">
         <div className="text-lg font-semibold text-slate-900">{title}</div>
         {tooltip && <span className="text-xs text-slate-500">{tooltip}</span>}
@@ -35,7 +35,7 @@ export const SkillTags = ({ title, items = [], tone = 'primary', tooltip }: Skil
               )}
               whileHover={{ translateY: -3, scale: 1.02 }}
             >
-              {tone === 'warning' && '⚠️'} {item}
+              {tone === 'warning' && '!'} {item}
             </motion.span>
           ))}
         </div>

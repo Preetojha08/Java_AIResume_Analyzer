@@ -1,4 +1,4 @@
-import { AnalysisResponse, ApiError, ScoreResponse, UploadResponse } from '../types/resume';
+import { AnalysisResponse, ApiError, JobFitRequest, JobFitResponse, ScoreResponse, UploadResponse } from '../types/resume';
 
 const BASE_URL = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/$/, '') ?? '';
 const API_KEY = import.meta.env.VITE_API_KEY as string | undefined;
@@ -74,4 +74,26 @@ export const deleteResume = async (resumeId: string): Promise<void> => {
     error.data = data;
     throw error;
   }
+};
+
+export const createJobFit = async (resumeId: string, payload: JobFitRequest): Promise<JobFitResponse> => {
+  ensureBaseUrl();
+  const response = await fetch(`${BASE_URL}/api/resumes/${resumeId}/job-fit`, withApiKey({
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  }));
+  return handleResponse<JobFitResponse>(response);
+};
+
+export const listJobFits = async (resumeId: string): Promise<JobFitResponse[]> => {
+  ensureBaseUrl();
+  const response = await fetch(`${BASE_URL}/api/resumes/${resumeId}/job-fit`, withApiKey({ method: 'GET' }));
+  return handleResponse<JobFitResponse[]>(response);
+};
+
+export const getJobFit = async (resumeId: string, jobFitId: string): Promise<JobFitResponse> => {
+  ensureBaseUrl();
+  const response = await fetch(`${BASE_URL}/api/resumes/${resumeId}/job-fit/${jobFitId}`, withApiKey({ method: 'GET' }));
+  return handleResponse<JobFitResponse>(response);
 };

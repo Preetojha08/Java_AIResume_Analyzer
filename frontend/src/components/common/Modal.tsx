@@ -30,14 +30,14 @@ export const Modal = ({
 
   return (
     <div className="fixed inset-0 z-40 flex items-center justify-center bg-slate-900/50 px-4">
-      <div className="glass-card w-full max-w-lg rounded-2xl p-6 shadow-2xl">
+      <div className="w-full max-w-lg rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl">
         <div className="flex items-start justify-between gap-3">
           <div>
             <h3 className="text-lg font-semibold text-slate-900">{title}</h3>
             {description && <p className="mt-1 text-sm text-slate-600">{description}</p>}
           </div>
           <button className="text-slate-500 hover:text-slate-700" onClick={onClose} aria-label="Close modal">
-            ✕
+            x
           </button>
         </div>
         {children && <div className="mt-4 text-sm text-slate-700">{children}</div>}

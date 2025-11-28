@@ -20,7 +20,7 @@ export const AnalysisSection = ({ title, items, tone = 'default', children, hint
 
   return (
     <motion.div
-      className="glass-card rounded-2xl p-5 shadow-subtle"
+      className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
       initial={{ opacity: 0, y: 12 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.1 }}
@@ -38,7 +38,7 @@ export const AnalysisSection = ({ title, items, tone = 'default', children, hint
               className={clsx('tag', pillClass, tone === 'warning' && 'tag-warning flex items-center gap-1')}
               whileHover={{ scale: 1.03, translateY: -2 }}
             >
-              {tone === 'warning' && '⚠️'} {item}
+              {tone === 'warning' && '!'} {item}
             </motion.span>
           ))}
         </div>

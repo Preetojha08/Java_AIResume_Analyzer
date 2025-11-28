@@ -6,7 +6,7 @@ interface RolesChipsProps {
 
 export const RolesChips = ({ roles = [] }: RolesChipsProps) => {
   return (
-    <div className="glass-card rounded-2xl p-5 shadow-subtle">
+    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
       <div className="flex items-center justify-between gap-2">
         <h3 className="text-lg font-semibold text-slate-900">Suggested Roles</h3>
         <p className="text-xs text-slate-500">Best fit matches</p>

@@ -39,15 +39,11 @@ export const UploadCard = ({ onUpload, loading, error, result }: UploadCardProps
 
   return (
     <motion.div
-      className="glass-card gradient-border relative overflow-hidden rounded-2xl p-8"
+      className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-8 shadow-sm"
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: 'easeOut' }}
     >
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute left-10 top-10 h-32 w-32 rounded-full bg-primary-100/40 blur-3xl" />
-        <div className="absolute right-10 bottom-10 h-32 w-32 rounded-full bg-accent-100/50 blur-3xl" />
-      </div>
       <div className="relative grid gap-6">
         <div className="flex items-center gap-3">
           <div className="rounded-full bg-gradient-to-br from-primary-500 to-accent-500 p-3 text-white shadow-floating">
@@ -70,12 +66,12 @@ export const UploadCard = ({ onUpload, loading, error, result }: UploadCardProps
           }}
           onDrop={handleDrop}
           className={`group relative flex flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed p-8 text-center transition ${
-            dragging ? 'border-primary-400 bg-primary-50/40' : 'border-slate-200 bg-white/80'
+            dragging ? 'border-primary-400 bg-primary-50/40' : 'border-slate-200 bg-white'
           }`}
           animate={{ scale: dragging ? 1.01 : 1 }}
           transition={{ type: 'spring', stiffness: 200, damping: 20 }}
         >
-          <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-primary-500/10 to-accent-500/10 opacity-0 blur-2xl transition group-hover:opacity-100" />
+          <div className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-r from-primary-500/10 to-accent-500/10 opacity-0 blur-2xl transition group-hover:opacity-100" />
           <p className="text-sm font-semibold text-slate-700">Drag & drop your PDF here</p>
           <p className="text-xs text-slate-500">or</p>
           <Button variant="primary" size="lg" onClick={() => inputRef.current?.click()} loading={loading}>
@@ -89,7 +85,7 @@ export const UploadCard = ({ onUpload, loading, error, result }: UploadCardProps
             onChange={(e) => onFile(e.target.files?.[0])}
           />
           <p className="text-xs text-slate-500">Maximum 10MB. Only PDF is accepted.</p>
-          <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-primary-500/30 to-accent-500/30 opacity-0 blur-3xl transition group-hover:opacity-60" />
+          <div className="pointer-events-none absolute -inset-1 rounded-2xl bg-gradient-to-r from-primary-500/30 to-accent-500/30 opacity-0 blur-3xl transition group-hover:opacity-60" />
         </motion.div>
 
         {(localError || error) && <p className="text-sm text-rose-600">{localError || error}</p>}

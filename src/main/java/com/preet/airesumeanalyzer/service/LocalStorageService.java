@@ -43,6 +43,16 @@ public class LocalStorageService implements StorageService {
         }
     }
 
+    @Override
+    public InputStream load(String key) {
+        Path targetFile = resolvePath(key);
+        try {
+            return Files.newInputStream(targetFile);
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to load resume file", e);
+        }
+    }
+
     private Path resolvePath(String key) {
         Path basePath = Path.of(storageProperties.getLocal().getBasePath()).toAbsolutePath().normalize();
         Path target = basePath.resolve(key).normalize();
