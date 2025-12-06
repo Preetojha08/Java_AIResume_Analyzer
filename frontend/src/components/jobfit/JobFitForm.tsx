@@ -30,7 +30,7 @@ const JobFitForm = ({ onSubmit, loading }: JobFitFormProps) => {
           type="text"
           value={jobTitle}
           onChange={(e) => setJobTitle(e.target.value)}
-          className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-100"
+          className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm focus:border-rose-400 focus:outline-none focus:ring-2 focus:ring-rose-100"
           placeholder="e.g., Frontend Engineer"
         />
       </div>
@@ -39,14 +39,21 @@ const JobFitForm = ({ onSubmit, loading }: JobFitFormProps) => {
         <textarea
           value={jobDescription}
           onChange={(e) => setJobDescription(e.target.value)}
-          className="w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-100"
+          className="w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm focus:border-rose-400 focus:outline-none focus:ring-2 focus:ring-rose-100"
           placeholder="Paste the full JD here..."
           rows={6}
           required
         />
       </div>
       <div className="flex justify-end">
-        <Button type="submit" size="lg" variant="primary" loading={loading} disabled={!jobDescription.trim()}>
+        <Button
+          type="submit"
+          size="lg"
+          variant="danger"
+          className="bg-rose-600 hover:bg-rose-700"
+          loading={loading}
+          disabled={!jobDescription.trim()}
+        >
           Analyze Job Fit
         </Button>
       </div>

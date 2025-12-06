@@ -1,6 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ['./index.html', './src/**/*.{ts,tsx}'],
+  darkMode: 'class',
   theme: {
     extend: {
       fontFamily: {
@@ -8,25 +9,25 @@ module.exports = {
       },
       colors: {
         primary: {
-          50: '#eef2ff',
-          100: '#e0e7ff',
-          200: '#c7d2fe',
-          500: '#6366f1',
-          600: '#4f46e5',
-          700: '#4338ca',
+          50: '#fff1f2',
+          100: '#ffe4e6',
+          200: '#fecdd3',
+          500: '#f43f5e',
+          600: '#e11d48',
+          700: '#be123c',
         },
         accent: {
-          50: '#ecfeff',
-          100: '#cffafe',
-          200: '#a5f3fc',
-          500: '#06b6d4',
-          600: '#0891b2',
+          50: '#fff7ed',
+          100: '#ffedd5',
+          200: '#fed7aa',
+          500: '#f97316',
+          600: '#ea580c',
         },
         slateglass: 'rgba(255,255,255,0.7)',
       },
       boxShadow: {
         card: '0 10px 50px rgba(0,0,0,0.08)',
-        floating: '0 25px 50px -12px rgba(99,102,241,0.35)',
+        floating: '0 25px 50px -12px rgba(244,63,94,0.35)',
         subtle: '0 8px 24px rgba(15,23,42,0.08)',
       },
       borderRadius: {
